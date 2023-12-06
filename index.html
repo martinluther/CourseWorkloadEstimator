@@ -34,6 +34,10 @@
       color: white;
       background-color: #003d6b;
     }
+    .form-label {
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 
@@ -43,11 +47,88 @@
       <h1 class="my-4">Course Workload Estimator</h1>
     </div>
   </header>
-  <main>
-    <div class="container py-4">
 
+  <main id="app">
+    <div class="container py-4">
+      <div class="row">
+        <div class="col">
+          <h2 class="h6 text-uppercase text-center">Course Info</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="class-weeks" class="form-label">Class Duration (Weeks):</label>
+                <input type="number" min="0" class="form-control" id="class-weeks" v-model="classWeeks">
+              </div>
+            </div>
+          </div>
+          <h2 class="h6 text-uppercase text-center">Reading Assignments</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="weekly-pages" class="form-label">Pages Per Week:</label>
+                <input type="number" min="0" class="form-control" id="weekly-pages" v-model="weeklyPages">
+              </div>
+              <hr>
+              <div class="mb-3">
+                <label for="reading-density" class="form-label">Page Density:</label>
+                <select class="form-select" id="reading-density" v-model="readingDensity">
+                  <option value="0">450 Words (Paperback)</option>
+                  <option value="1">600 Words (Monograph)</option>
+                  <option value="2">750 Words (Textbook)</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="reading-difficulty" class="form-label">Difficulty:</label>
+                <select class="form-select" id="reading-difficulty" v-model="readingDifficulty">
+                  <option value="0">No New Concepts</option>
+                  <option value="1">Some New Concepts</option>
+                  <option value="2">Many New Concepts</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="reading-purpose" class="form-label">Purpose:</label>
+                <select class="form-select" id="reading-purpose" v-model="readingPurpose">
+                  <option value="0">Survey</option>
+                  <option value="1">Understand</option>
+                  <option value="2">Engage</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="reading-rate" class="form-label">Estimated Reading Rate:</label>
+                <div id="reading-rate">{{estimatedReadingRate}} pages per hour</div>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" v-model="useManualReadingRate" id="use-manual-reading-rate">
+                <label class="form-check-label" for="use-manual-reading-rate">
+                  manually adjust
+                </label>
+              </div>
+              <div class="mb-3" v-if="useManualReadingRate">
+                <label for="override-pages-per-hour" class="form-label">Pages Read Per Hour:</label>
+                <input type="number" min="0" class="form-control" id="override-pages-per-hour" v-model="overridePagesPerHour">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="h6 text-uppercase text-center">Writing Assignments</h2>
+          <h2 class="h6 text-uppercase text-center">Videos / Podcasts</h2>
+        </div>
+        <div class="col">
+          <h2 class="h6 text-uppercase text-center">Discussion Posts</h2>
+          <h2 class="h6 text-uppercase text-center">Exams</h2>
+        </div>
+        <div class="col">
+          <h2 class="h6 text-uppercase text-center">Other Assignments</h2>
+          <h2 class="h6 text-uppercase text-center">Class Meetings</h2>
+          <hr>
+          <h2 class="h6 text-uppercase text-center">Workload Estimates</h2>
+          
+        </div>
+      </div>
     </div>
   </main>
+
   <footer>
     <div class="container">
       <p class="text-center my-4">
@@ -61,6 +142,36 @@
     </div>
   </footer>
   <script>
+const app = Vue.createApp({
+  data() {
+    return {
+      readingRates: [
+        [[67,47, 33], [33, 24, 17], [17, 12, 9]], 
+        [[50, 35, 25], [25, 18, 13], [13, 9, 7]], 
+        [[40, 28, 20], [20, 14, 10], [10, 7, 5]]
+      ],
+      classWeeks: 15,
+      weeklyPages: 0,
+      readingDensity: 0,
+      readingDifficulty: 0,
+      readingPurpose: 0,
+      useManualReadingRate: false,
+      overridePagesPerHour: 10,
+    }
+  },
+  computed: {
+    estimatedReadingRate() {
+      return this.readingRates[this.readingDensity ][this.readingPurpose][this.readingDifficulty];
+    },
+    readingRate(){
+      if (this.useManualReadingRate){
+        return this.overridePagesPerHour;
+      } else {
+        return this.estimatedReadingRate();
+      }
+    }
+  }
+}).mount('#app')
 
   </script>
 </body>
