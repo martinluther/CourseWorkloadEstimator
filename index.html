@@ -112,7 +112,61 @@
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Writing Assignments</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="semester-pages" class="form-label">Pages Per Semester:</label>
+                <input type="number" min="0" class="form-control" id="semester-pages" v-model="semesterPages">
+              </div>
+              <hr>
+              <div class="mb-3">
+                <label for="writing-density" class="form-label">Page Density:</label>
+                <select class="form-select" id="writing-density" v-model="writingDensity">
+                  <option value="0">250 Words</option>
+                  <option value="1">500 Words</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="writing-genre" class="form-label">Genre:</label>
+                <select class="form-select" id="writing-genre" v-model="writingGenre">
+                  <option value="0">Reflection/Narrative</option>
+                  <option value="1">Argument</option>
+                  <option value="2">Research</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="writing-drafting" class="form-label">Drafting:</label>
+                <select class="form-select" id="writing-drafting" v-model="writingDrafting">
+                  <option value="0">No Drafting</option>
+                  <option value="1">Minimal Drafting</option>
+                  <option value="2">Extensive Drafting</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="writing-rate" class="form-label">Estimated Writing Rate:</label>
+                <div id="writing-rate">{{estimatedWritingRate}} pages per hour</div>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" v-model="useManualWritingRate" id="use-manual-writing-rate">
+                <label class="form-check-label" for="use-manual-writing-rate">
+                  manually adjust
+                </label>
+              </div>
+              <div class="mb-3" v-if="useManualWritingRate">
+                <label for="override-writing-pages-per-hour" class="form-label">Pages Read Per Hour:</label>
+                <input type="number" min="0" class="form-control" id="override-writing-pages-per-hour" v-model="overrideWritingPagesPerHour">
+              </div>
+            </div>
+          </div>
           <h2 class="h6 text-uppercase text-center">Videos / Podcasts</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="video-weekly-hours" class="form-label">Hours Per Week:</label>
+                    <input type="number" min="0" class="form-control" id="video-weekly-hours" v-model="videoWeeklyHours">
+                </div>
+            </div>
+          </div>
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Discussion Posts</h2>
@@ -150,6 +204,11 @@ const app = Vue.createApp({
         [[50, 35, 25], [25, 18, 13], [13, 9, 7]], 
         [[40, 28, 20], [20, 14, 10], [10, 7, 5]]
       ],
+      writingRates:[
+        [[0.75, 1.5], [1, 2], [1.25, 2.5]], 
+        [[1.5, 3],    [2, 4], [2.5, 5]], 
+        [[3, 6],      [4, 8], [5, 10]]
+      ],
       classWeeks: 15,
       weeklyPages: 0,
       readingDensity: 0,
@@ -157,11 +216,18 @@ const app = Vue.createApp({
       readingPurpose: 0,
       useManualReadingRate: false,
       overridePagesPerHour: 10,
+      semesterPages:0,
+      writingDensity:0,
+      writingGenre:0,
+      writingDrafting:0,
+      videoWeeklyHours:0,
+      useManualWritingRate: false,
+      overrideWritingPagesPerHour:0.5,
     }
   },
   computed: {
     estimatedReadingRate() {
-      return this.readingRates[this.readingDensity ][this.readingPurpose][this.readingDifficulty];
+      return this.readingRates[this.readingDensity][this.readingPurpose][this.readingDifficulty];
     },
     readingRate(){
       if (this.useManualReadingRate){
@@ -169,6 +235,16 @@ const app = Vue.createApp({
       } else {
         return this.estimatedReadingRate();
       }
+    },
+    estimatedWritingRate() {
+        return this.writingRates[this.writingGenre][this.writingDrafting][this.writingDensity];
+    },
+    writingRate(){
+        if (this.useManualWritingRate){
+            return this.overrideWritingPagesPerHour;
+        } else {
+            return this.estimatedWritingRate();
+        }
     }
   }
 }).mount('#app')
