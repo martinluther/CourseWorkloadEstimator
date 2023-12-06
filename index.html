@@ -170,7 +170,67 @@
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Discussion Posts</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="weekly-discussions" class="form-label">Posts Per Week:</label>
+                <input type="number" min="0" class="form-control" id="weekly-discussions" v-model="weeklyDiscussions">
+              </div>
+              <hr>
+              <div class="mb-3">
+                <label for="discussion-format" class="form-label">Format:</label>
+                <select class="form-select" id="discussion-format" v-model="discussionFormat">
+                  <option value="0">Text</option>
+                  <option value="1">Audio/Video</option>
+                </select>
+              </div>
+              <div class="mb-3" v-if="discussionFormat == 0">
+                <label for="discussion-length-words" class="form-label">Avg. Length (Words):</label>
+                <input type="number" min="0" class="form-control" id="discussion-length-words" v-model="discussionWordLength">
+              </div>
+              <div class="mb-3" v-else>
+                <label for="discussion-length-minutes" class="form-label">Avg. Length (Minutes):</label>
+                <input type="number" min="0" class="form-control" id="discussion-length-minutes" v-model="discussionVideoLength">
+              </div>
+              <div class="mb-3">
+                <label for="writing-rate" class="form-label">Estimated Hours:</label>
+                <div id="writing-rate">{{estimatedDiscussionRate}} hours / week</div>
+              </div>
+              <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" v-model="useManualDiscussionRate" id="use-manual-discussion-rate">
+                <label class="form-check-label" for="use-manual-discussion-rate">
+                  manually adjust
+                </label>
+              </div>
+              <div class="mb-3" v-if="useManualDiscussionRate">
+                <label for="override-discussion-hours" class="form-label">Hours Per Week:</label>
+                <input type="number" min="0" class="form-control" id="override-discussion-hours" v-model="overrideDiscussionHours">
+              </div>
+            </div>
+          </div>
           <h2 class="h6 text-uppercase text-center">Exams</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="semester-exams" class="form-label">Exams Per Semester:</label>
+                    <input type="number" min="0" class="form-control" id="semester-exams" v-model="semesterExams">
+                </div>
+                <div class="mb-3">
+                    <label for="exam-study-hours" class="form-label">Study Hours Per Exam:</label>
+                    <input type="number" min="0" class="form-control" id="exam-study-hours" v-model="examStudyHours">
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" v-model="useTakeHomeExams" id="use-take-home-exams">
+                    <label class="form-check-label" for="use-take-home-exams">
+                      Take-Home Exams
+                    </label>
+                </div>
+                <div class="mb-3" v-if="useTakeHomeExams">
+                    <label for="exam-time-limit" class="form-label">Exam Time Limit (in Minutes):</label>
+                    <input type="number" min="0" class="form-control" id="exam-time-limit" v-model="takeHomeExamTimeLimit">
+                  </div>
+            </div>
+          </div>
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Other Assignments</h2>
@@ -223,6 +283,16 @@ const app = Vue.createApp({
       videoWeeklyHours:0,
       useManualWritingRate: false,
       overrideWritingPagesPerHour:0.5,
+      weeklyDiscussions:0,
+      discussionFormat:0,
+      discussionWordLength:250,
+      discussionVideoLength:3,
+      useManualDiscussionRate:false,
+      overrideDiscussionHours:1,
+      semesterExams:0,
+      examStudyHours:5,
+      useTakeHomeExams:false,
+      takeHomeExamTimeLimit:60,
     }
   },
   computed: {
@@ -244,6 +314,19 @@ const app = Vue.createApp({
             return this.overrideWritingPagesPerHour;
         } else {
             return this.estimatedWritingRate();
+        }
+    },
+    estimatedDiscussionRate() {
+        if(this.discussionFormat == 0){
+            return (this.discussionWordLength * this.weeklyDiscussions) / 250;
+        }
+        return 0.18 * (this.discussionVideoLength * this.weeklyDiscussions) + ((this.discussionVideoLength * this.weeklyDiscussions) / 6);
+    },
+    discussionRate(){
+        if (this.useManualDiscussionRate){
+            return this.overrideDiscussionHours;
+        } else {
+            return this.estimatedDiscussionRate();
         }
     }
   }
