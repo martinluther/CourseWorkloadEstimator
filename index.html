@@ -234,7 +234,38 @@
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Other Assignments</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="other-assignments" class="form-label"># Per Semester:</label>
+                    <input type="number" min="0" class="form-control" id="other-assignments" v-model="otherAssignments">
+                </div>
+                <div class="mb-3">
+                    <label for="other-hours" class="form-label">Hours Per Assignment:</label>
+                    <div class="text-center">{{otherHours}}</div>
+                    <input type="range" class="form-range" min="0" max="50" id="other-hours" v-model="otherHours">
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="other-engage" v-model="otherEngage">
+                    <label class="form-check-label" for="other-engage">
+                      Independent
+                    </label>
+                </div>
+            </div>
+          </div>
           <h2 class="h6 text-uppercase text-center">Class Meetings</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3">
+                <label for="sync-sessions" class="form-label">Live Meetings Per Week:</label>
+                <input type="number" min="0" class="form-control" id="sync-sessions" v-model="syncSessions">
+              </div>
+              <div class="mb-3">
+                <label for="sync-length" class="form-label">Meeting Length (Hours):</label>
+                <input type="number" min="0" class="form-control" id="sync-length" v-model="syncLength">
+              </div>
+            </div>
+          </div>
           <hr>
           <h2 class="h6 text-uppercase text-center">Workload Estimates</h2>
           
@@ -293,6 +324,11 @@ const app = Vue.createApp({
       examStudyHours:5,
       useTakeHomeExams:false,
       takeHomeExamTimeLimit:60,
+      otherAssignments: 0,
+      otherHours: 0,
+      otherEngage: false,
+      syncSessions: 0,
+      syncLength: 0,
     }
   },
   computed: {
