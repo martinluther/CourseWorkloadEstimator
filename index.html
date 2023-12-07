@@ -66,7 +66,7 @@
             <div class="card-body">
               <div class="mb-3">
                 <label for="weekly-pages" class="form-label">Pages Per Week:</label>
-                <input type="number" min="0" class="form-control" id="weekly-pages" v-model="weeklyPages">
+                <input type="number" min="0" class="form-control" id="weekly-pages" v-model="readingWeeklyPages">
               </div>
               <hr>
               <div class="mb-3">
@@ -116,7 +116,7 @@
             <div class="card-body">
               <div class="mb-3">
                 <label for="semester-pages" class="form-label">Pages Per Semester:</label>
-                <input type="number" min="0" class="form-control" id="semester-pages" v-model="semesterPages">
+                <input type="number" min="0" class="form-control" id="semester-pages" v-model="writingSemesterPages">
               </div>
               <hr>
               <div class="mb-3">
@@ -144,7 +144,7 @@
               </div>
               <div class="mb-3">
                 <label for="writing-rate" class="form-label">Estimated Writing Rate:</label>
-                <div id="writing-rate">{{estimatedWritingRate}} pages per hour</div>
+                <div id="writing-rate">{{hourFormat(estimatedWritingRate)}} pages per hour</div>
               </div>
               <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" v-model="useManualWritingRate" id="use-manual-writing-rate">
@@ -174,7 +174,7 @@
             <div class="card-body">
               <div class="mb-3">
                 <label for="weekly-discussions" class="form-label">Posts Per Week:</label>
-                <input type="number" min="0" class="form-control" id="weekly-discussions" v-model="weeklyDiscussions">
+                <input type="number" min="0" class="form-control" id="weekly-discussions" v-model="discussionWeeklyPosts">
               </div>
               <hr>
               <div class="mb-3">
@@ -194,7 +194,7 @@
               </div>
               <div class="mb-3">
                 <label for="writing-rate" class="form-label">Estimated Hours:</label>
-                <div id="writing-rate">{{estimatedDiscussionRate}} hours / week</div>
+                <div id="writing-rate">{{hourFormat(discussionPostWeeklyHours)}} hours / week</div>
               </div>
               <div class="form-check mb-3">
                 <input class="form-check-input" type="checkbox" v-model="useManualDiscussionRate" id="use-manual-discussion-rate">
@@ -268,7 +268,13 @@
           </div>
           <hr>
           <h2 class="h6 text-uppercase text-center">Workload Estimates</h2>
-          
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+              <div class="mb-3 form-label text-end">Total: <span class="text-nowrap">{{hourFormat(totalWorkload)}} hrs/wk</span></div>
+              <div class="mb-3 form-label text-end">Independent: <span class="text-nowrap">{{hourFormat(independentWorkload)}} hrs/wk</span></div>
+              <div class="mb-3 form-label text-end">Contact: <span class="text-nowrap">{{hourFormat(contactWorkload)}} hrs/wk</span></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -301,20 +307,20 @@ const app = Vue.createApp({
         [[3, 6],      [4, 8], [5, 10]]
       ],
       classWeeks: 15,
-      weeklyPages: 0,
+      readingWeeklyPages: 0,
       readingDensity: 0,
       readingDifficulty: 0,
       readingPurpose: 0,
       useManualReadingRate: false,
       overridePagesPerHour: 10,
-      semesterPages:0,
+      writingSemesterPages:0,
       writingDensity:0,
       writingGenre:0,
       writingDrafting:0,
       videoWeeklyHours:0,
       useManualWritingRate: false,
       overrideWritingPagesPerHour:0.5,
-      weeklyDiscussions:0,
+      discussionWeeklyPosts:0,
       discussionFormat:0,
       discussionWordLength:250,
       discussionVideoLength:3,
@@ -339,7 +345,7 @@ const app = Vue.createApp({
       if (this.useManualReadingRate){
         return this.overridePagesPerHour;
       } else {
-        return this.estimatedReadingRate();
+        return this.estimatedReadingRate;
       }
     },
     estimatedWritingRate() {
@@ -349,23 +355,48 @@ const app = Vue.createApp({
         if (this.useManualWritingRate){
             return this.overrideWritingPagesPerHour;
         } else {
-            return this.estimatedWritingRate();
+            return this.estimatedWritingRate;
         }
     },
-    estimatedDiscussionRate() {
-        if(this.discussionFormat == 0){
-            return (this.discussionWordLength * this.weeklyDiscussions) / 250;
-        }
-        return 0.18 * (this.discussionVideoLength * this.weeklyDiscussions) + ((this.discussionVideoLength * this.weeklyDiscussions) / 6);
-    },
-    discussionRate(){
-        if (this.useManualDiscussionRate){
-            return this.overrideDiscussionHours;
+    discussionPostWeeklyHours(){
+      if (this.useManualDiscussionRate){
+        return this.overrideDiscussionHours;
+      } else {
+        if (this.discussionFormat === 0){
+          // 250 => one hour to write 250 words
+          return this.discussionWordLength * this.discussionWeeklyPosts / 250;
         } else {
-            return this.estimatedDiscussionRate();
+          // 3 => 20 minutes to record one minute of video
+          return this.discussionVideoLength * this.discussionWeeklyPosts / 3;
         }
+      }
+    },
+    independentWorkload(){
+      return (
+        (this.readingWeeklyPages / this.readingRate)
+        + (this.writingRate * this.writingSemesterPages / this.classWeeks)
+        + (this.semesterExams * this.examStudyHours / this.classWeeks)
+        + this.videoWeeklyHours
+        + (this.otherEngage ? 0 : this.otherAssignments * this.otherHours)
+        + ((this.useTakeHomeExams ? this.takeHomeExamTimeLimit / 60 : 0) * this.semesterExams / this.classWeeks)
+      );
+    },
+    contactWorkload(){
+      return (
+        this.discussionPostWeeklyHours
+        + (this.syncSessions * this.syncLength)
+        + (this.otherEngage ? this.otherAssignments * this.otherHours : 0)
+      );
+    },
+    totalWorkload(){
+      return this.independentWorkload + this.contactWorkload;
+    },
+  },
+  methods: {
+    hourFormat(hours){
+      return Number(hours.toFixed(2));
     }
-  }
+  },
 }).mount('#app')
 
   </script>
