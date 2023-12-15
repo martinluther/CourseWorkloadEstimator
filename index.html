@@ -379,7 +379,7 @@ const app = Vue.createApp({
         + (this.writingRate * this.writingSemesterPages / this.classWeeks)
         + (this.semesterExams * this.examStudyHours / this.classWeeks)
         + this.videoWeeklyHours
-        + (this.otherEngage ? 0 : this.otherAssignments * this.otherHours)
+        + (this.otherEngage ? this.otherAssignments * this.otherHours / this.classWeeks : 0)
         + ((this.useTakeHomeExams ? this.takeHomeExamTimeLimit / 60 : 0) * this.semesterExams / this.classWeeks)
       );
     },
@@ -387,7 +387,7 @@ const app = Vue.createApp({
       return (
         this.discussionPostWeeklyHours
         + (this.syncSessions * this.syncLength)
-        + (this.otherEngage ? this.otherAssignments * this.otherHours : 0)
+        + (this.otherEngage ? 0 : this.otherAssignments * this.otherHours / this.classWeeks)
       );
     },
     totalWorkload(){
