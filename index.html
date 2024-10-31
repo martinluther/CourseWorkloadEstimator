@@ -133,7 +133,8 @@
                 <select class="form-select" id="writing-genre" v-model="writingGenre">
                   <option value="0">Reflection/Narrative</option>
                   <option value="1">Argument</option>
-                  <option value="2">Research</option>
+                  <option value="2">Guided Research</option>
+                  <option value="3">Research</option>
                 </select>
               </div>
               <div class="mb-3">
@@ -306,6 +307,7 @@ const app = Vue.createApp({
       writingRates:[
         [[0.75, 1.5], [1, 2], [1.25, 2.5]], 
         [[1.5, 3],    [2, 4], [2.5, 5]], 
+        [[2, 4],      [2.66, 5.33], [3.33, 6.66]], 
         [[3, 6],      [4, 8], [5, 10]]
       ],
       classWeeks: 15,
