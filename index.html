@@ -411,7 +411,7 @@ const app = Vue.createApp({
         + this.videoWeeklyHours
         + (this.otherEngage ? this.otherAssignments * this.otherHours / this.classWeeks : 0)
         + ((this.useTakeHomeExams ? this.takeHomeExamTimeLimit / 60 : 0) * this.semesterExams / this.classWeeks)
-        + ((this.useTakeHomeQuizzes ? this.takeHomeQuizTimeLimit / 60 : 0) * this.semesterExams / this.classWeeks)
+        + ((this.useTakeHomeQuizzes ? this.takeHomeQuizTimeLimit / 60 : 0) * this.semesterQuizzes / this.classWeeks)
       );
     },
     contactWorkload(){
