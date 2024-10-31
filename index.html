@@ -111,6 +111,15 @@
               </div>
             </div>
           </div>
+          <h2 class="h6 text-uppercase text-center">Videos / Podcasts</h2>
+          <div class="card text-bg-light mb-3">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="video-weekly-hours" class="form-label">Hours Per Week:</label>
+                    <input type="number" min="0" class="form-control" id="video-weekly-hours" v-model="videoWeeklyHours">
+                </div>
+            </div>
+          </div>
         </div>
         <div class="col">
           <h2 class="h6 text-uppercase text-center">Writing Assignments</h2>
@@ -161,13 +170,27 @@
               </div>
             </div>
           </div>
-          <h2 class="h6 text-uppercase text-center">Videos / Podcasts</h2>
+          <h2 class="h6 text-uppercase text-center">Quizzes</h2>
           <div class="card text-bg-light mb-3">
             <div class="card-body">
                 <div class="mb-3">
-                    <label for="video-weekly-hours" class="form-label">Hours Per Week:</label>
-                    <input type="number" min="0" class="form-control" id="video-weekly-hours" v-model="videoWeeklyHours">
+                    <label for="semester-quizzes" class="form-label">Quizzes Per Semester:</label>
+                    <input type="number" min="0" class="form-control" id="semester-quizzes" v-model="semesterQuizzes">
                 </div>
+                <div class="mb-3">
+                    <label for="quiz-study-hours" class="form-label">Study Hours Per Quiz:</label>
+                    <input type="number" min="0" class="form-control" id="quiz-study-hours" v-model="quizStudyHours">
+                </div>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" v-model="useTakeHomeQuizzes" id="use-take-home-quizzes">
+                    <label class="form-check-label" for="use-take-home-quizzes">
+                      Take-Home Exams
+                    </label>
+                </div>
+                <div class="mb-3" v-if="useTakeHomeQuizzes">
+                    <label for="quiz-time-limit" class="form-label">Quiz Time Limit (in Minutes):</label>
+                    <input type="number" min="0" class="form-control" id="quiz-time-limit" v-model="takeHomeQuizTimeLimit">
+                  </div>
             </div>
           </div>
         </div>
@@ -231,29 +254,6 @@
                 <div class="mb-3" v-if="useTakeHomeExams">
                     <label for="exam-time-limit" class="form-label">Exam Time Limit (in Minutes):</label>
                     <input type="number" min="0" class="form-control" id="exam-time-limit" v-model="takeHomeExamTimeLimit">
-                  </div>
-            </div>
-          </div>
-          <h2 class="h6 text-uppercase text-center">Quizzes</h2>
-          <div class="card text-bg-light mb-3">
-            <div class="card-body">
-                <div class="mb-3">
-                    <label for="semester-quizzes" class="form-label">Quizzes Per Semester:</label>
-                    <input type="number" min="0" class="form-control" id="semester-quizzes" v-model="semesterQuizzes">
-                </div>
-                <div class="mb-3">
-                    <label for="quiz-study-hours" class="form-label">Study Hours Per Quiz:</label>
-                    <input type="number" min="0" class="form-control" id="quiz-study-hours" v-model="quizStudyHours">
-                </div>
-                <div class="form-check mb-3">
-                    <input class="form-check-input" type="checkbox" v-model="useTakeHomeQuizzes" id="use-take-home-quizzes">
-                    <label class="form-check-label" for="use-take-home-quizzes">
-                      Take-Home Exams
-                    </label>
-                </div>
-                <div class="mb-3" v-if="useTakeHomeQuizzes">
-                    <label for="quiz-time-limit" class="form-label">Quiz Time Limit (in Minutes):</label>
-                    <input type="number" min="0" class="form-control" id="quiz-time-limit" v-model="takeHomeQuizTimeLimit">
                   </div>
             </div>
           </div>
